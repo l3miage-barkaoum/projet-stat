@@ -2,20 +2,19 @@
 title: "Projet statistiques"
 author: "BARKAOUI Meriam et MAUBLANC Albane"
 date: "2023-06-16"
-output: pdf_document
+output:
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 ```
-
-````{r , include=FALSE}
-install.packages("knitr")
-install.packages("shinydashboard")
-install.packages("shiny", dependencies = TRUE)
-install.packages("reshape")
-````
 
 ````{r}
 library(ggplot2)
@@ -28,27 +27,28 @@ attach(resultat)
 ```
 
 
-**1 - Introduction**  
-1.1 Description du jeux de données:  
+# *1 - Introduction*
+
+## *1 - Description du jeux de données  *
 
 Dans le cadre de ce projet de statistiques, nous avons sélectionné un ensemble de données portant sur la musique et la santé mentale. Ce sujet nous intéresse particulièrement et constitue une excellente opportunité d'étude.  
 
 Nos données proviennent d'un sondage réalisé via un formulaire Google. Notre ensemble de données contient plusieurs informations, notamment:  
-    - *Timestamp* : l'heure de soumission du formulaire.  
-    - *Age* : l'âge du répondant (nombre entier).  
-    - *Primary streaming service* : la plateforme de streaming musical préférée du répondant (chaîne de caractères).  
-    - *Hours per day* : le nombre d'heures d'écoute de musique par jour (nombre décimal).  
-    - *While working* : indique si la personne écoute de la musique en travaillant (oui/non).
-    - *Instrumentalist* : indique si la personne joue d'un instrument de musique (oui/non).     - *Composer* : indique si la personne compose de la musique (oui/non).  
-    - *Exploratory* : indique si la personne explore de nouveaux genres musicaux ou artistes (oui/non).  
-    - *Foreign languages* : indique si le répondant écoute de la musique avec des paroles dans une langue qu'il ne maîtrise pas (oui/non).  
-    - *BPM* : le nombre de battements par minute du genre musical préféré (nombre entier).
-    - *Frequency [Classical], Frequency [Country], Frequency [EDM], Frequency [Folk], Frequency [Gospel], Frequency [Hip hop], Frequency [Jazz], Frequency [K pop], Frequency [Latin], Frequency [Lofi], Frequency [Metal], Frequency [Pop], Frequency [R&B], Frequency [Rap], Frequency [Rock], Frequency [Video game music]* : la fréquence à laquelle la personne écoute de la musique dans chaque genre (très fréquemment, parfois, rarement, jamais).  
-   - *Anxiety, Depression, Insomnia, OCD* : la personne doit s'auto-évaluer et choisir une valeur entre 0 et 10 pour déterminer le degré de présence de chaque trouble.  
-   - *Music effect* : l'effet de la musique sur la personne (améliore, aggrave, aucun effet).    
-  - *Permissions* : l'autorisation donnée par la personne pour publier ses données (I understand).  
+- *Timestamp* : l'heure de soumission du formulaire.  
+- *Age* : l'âge du répondant (nombre entier).  
+- *Primary streaming service* : la plateforme de streaming musical préférée du répondant (chaîne de caractères).  
+- *Hours per day* : le nombre d'heures d'écoute de musique par jour (nombre décimal).  
+- *While working* : indique si la personne écoute de la musique en travaillant (oui/non).
+- *Instrumentalist* : indique si la personne joue d'un instrument de musique (oui/non).     - *Composer* : indique si la personne compose de la musique (oui/non).  
+- *Exploratory* : indique si la personne explore de nouveaux genres musicaux ou artistes (oui/non).  
+- *Foreign languages* : indique si le répondant écoute de la musique avec des paroles dans une langue qu'il ne maîtrise pas (oui/non).  
+- *BPM* : le nombre de battements par minute du genre musical préféré (nombre entier).
+- *Frequency [Classical], Frequency [Country], Frequency [EDM], Frequency [Folk], Frequency [Gospel], Frequency [Hip hop], Frequency [Jazz], Frequency [K pop], Frequency [Latin], Frequency [Lofi], Frequency [Metal], Frequency [Pop], Frequency [R&B], Frequency [Rap], Frequency [Rock], Frequency [Video game music]* : la fréquence à laquelle la personne écoute de la musique dans chaque genre (très fréquemment, parfois, rarement, jamais).  
+- *Anxiety, Depression, Insomnia, OCD* : la personne doit s'auto-évaluer et choisir une valeur entre 0 et 10 pour déterminer le degré de présence de chaque trouble.  
+- *Music effect* : l'effet de la musique sur la personne (améliore, aggrave, aucun effet).    
+- *Permissions* : l'autorisation donnée par la personne pour publier ses données (I understand).  
 
-1.2 Description des modifications de la base :   
+## *2 - Description des modifications de la base  *  
 
 Nous avons choisi de supprimer la colonne contenant l'heure de soumission du formulaire ainsi que la colonne des permissions, car ces informations ne fournissent pas de données pertinentes pour notre étude.  
   
@@ -68,16 +68,17 @@ resultat <- subset(resultat, !is.na(BPM) & BPM != "")
 ```{r}
 resultat <- subset(resultat, !is.na(Primary.streaming.service) & Primary.streaming.service != "")
 ```
-1.3 Description de la population étudiée :   
+## *3 - Description de la population étudiée    *
 
 ```{r}
 nrow(resultat)
 ```
-Après nettoyage, notre dataframe est de taille 628 et notre unité statistique : individu.
+Après nettoyage, notre dataframe est de taille 628 et notre unité statistique est l'individu.
 
 1.4 Description des variables d’intérêt :  
 
-**variables qualitatives**   
+## *4 - Description des variables d'intérêt * 
+### **Variables qualitatives**   
 
 - *Frequency [Rock]* : Représente la fréquence à laquelle la personne écoute de la musique Rock.     
 --> Il s'agit d'une variable qualitative ordonnée qui a pour valeur : (très fréquemment, parfois, rarement, jamais).    
@@ -85,7 +86,7 @@ Après nettoyage, notre dataframe est de taille 628 et notre unité statistique 
 --> Il s'agit d'une variable qualitative nominale de type chaine de carctères.   
 - *Exploratory* : indique si la personne explore de nouveaux genres musicaux ou artistes.  --> Il s'agit d'une variable qualitative nominale qui a pour valeur (oui ou non).   
 
-**variables quantitative**    
+### **Variables quantitatives**    
 
 - *Age* : Représente l'âge du répondant. 
 --> Il s'agit d'une variable quantitative continue de type entier
@@ -94,182 +95,169 @@ Après nettoyage, notre dataframe est de taille 628 et notre unité statistique 
 - *BPM* : le nombre de battements par minute du genre musical préféré (nombre entier).   
 -->  Il s'agit d'une variable quantitative discrète, de type entier.  
 
-1.5 Liste de questions :   
+## *5 - Liste de questions   *
 
-    - Existe-t-il une corrélation entre l'écoute fréquente du genre musical Rock (fréquence : très fréquent, parfois) et le niveau de dépression des auditeurs ?
-    -  Existe-t-il une relation entre la plateforme de streaming musicale préférée des individus et leur ouverture à explorer de nouveaux genres musicaux ou artistes ?
-    - Existe-t-il une corrélation entre l'âge des répondants et le nombre de battements par minute (BPM) du genre musical préféré ?
+- Est-ce que le niveau de dépression des auditeurs dépend de l'écoute fréquente du genre musical Rock ?
+- Existe-t-il une relation entre la plateforme de streaming musicale préférée des individus et leur ouverture à explorer de nouveaux genres musicaux ou artistes ?
+- Existe-t-il une corrélation entre l'âge des répondants et le nombre de battements par minute (BPM) du genre musical préféré ?
 
 
-**2 - Analyse univariée**  
-2.1 Pour chaque variable qualitative d’intérêt, faire un graphique représentatif et donner les résumés numériques adaptés : 
-- - *Exploratory*
-````{r}
-
+# *2 - Analyse univariée*
+## *1- Variables qualitatives*
+**1- Graphique répresentatif et résumés numériques    **     
+Dans cette partie de notre analyse, nous souhaitons évaluer la propension des individus à découvrir de nouveaux genres de musique ainsi que de nouveaux artistes.    
+- *Exploratory*
+```{r}
 # Compter le nombre de réponses "oui" et "non"
 exploratory_counts <- table(resultat$Exploratory)
-#Conversion en data frame
-exploratory_counts_df <- as.data.frame(exploratory_counts)
-
-# Renommer les colonnes du data frame
-colnames(exploratory_counts_df) <- c("Reponse", "Nombre de personnes")
-
-````
-```{r}
-# Créer le graphique à barres
-bar_plot <- ggplot(data.frame(Exploratory = names(exploratory_counts_df), Count = exploratory_counts_df),
-                   aes(x = exploratory_counts_df$Reponse, y = exploratory_counts_df$`Nombre de personnes`)) +
-  geom_bar(stat = "identity", fill = "skyblue") +
-  labs(x = "Si la personne explore de nouveaux genres musicaux/artistes", y = "Nombre de réponses", title = "Graphe représantant la tendance des personne à explorer de nouveaux genres") +
-  theme_minimal()
-# Définir les couleurs des barres
-
+exploratory_counts_df<-as.data.frame(exploratory_counts)
 # Afficher le graphique
-print(bar_plot)
+barplot(exploratory_counts, col=c("#B2D8B2", "#D4EEFF"),
+        xlab="Si la personne explore de nouveaux genres musicaux/artistes",
+        ylab = "Nombre de réponses" )
+title("Graphe représantant la tendance des personne
+      à explorer de nouveaux genres/artistes")
 ```
-########Analyse########
+Comme nous pouvons le voir les personnes ont tendance à explorer de nouveaux genres/artistes.
+Les résumés numériques :
+```{r}
+summary(exploratory_counts_df)
+```
 
-- *Primary streaming service* : 
 
+- *Primary streaming service* :           
+**1- Graphique répresentatif et résumés numériques    **    
 ```{r}
 streaming_counts <- table(resultat$Primary.streaming.service)
 streaming_counts_df <- as.data.frame(streaming_counts)
 # Calculer les pourcentages
-streaming_counts_df$Percentage <- paste0(round(streaming_counts_df$Freq / sum(streaming_counts_df$Freq) * 100, 2), "%")
+streaming_counts_df$Percentage <- paste0(round(streaming_counts_df$Freq /
+                                                 sum(streaming_counts_df$Freq) * 100, 2), "%")
 
 # Créer le graphique en camembert
-
-pie_chart <- pie(streaming_counts, labels = streaming_counts_df$Percentage, col=c( "#FFD1AA", "#FFC1C1", "#E0BBE4", "#FAB4D6","#B2D8B2", "#D4EEFF"), main="Répartition des services de streaming de musique", cex = 0.6)
-legend(1.2, .5, c("Apple Music", "I do not use a plateform." ,"Other plateform", "Pandora", "Spotify", "YouTube Music"), cex = 0.7, fill = c( "#FFD1AA", "#FFC1C1", "#E0BBE4", "#FAB4D6","#B2D8B2", "#D4EEFF"))
-
-
+pie_chart <- pie(streaming_counts, labels = streaming_counts_df$Percentage,
+        col=c( "#FFD1AA", "#FFC1C1", "#E0BBE4", "#FAB4D6","#B2D8B2", "#D4EEFF"),
+        main="Répartition des services de streaming de musique", cex = 0.6)
+        legend(1.2, .5, c("Apple Music", "I do not use a plateform." ,
+              "Other plateform", "Pandora", "Spotify", "YouTube Music"),
+        cex = 0.7, fill = c( "#FFD1AA", "#FFC1C1", "#E0BBE4", "#FAB4D6","#B2D8B2", "#D4EEFF"))
 
 ```
+Spotify est la plateforme la plus utilisée, représentant 64% des réponses. Peut être en raison de sa vaste bibliothèque musicale, de son interface conviviale, de sa disponibilité multiplateforme et de son modèle freemium.
 - *Frequency [Rock]*  : 
 
 ```{r}
-
 frequency_rock_counts<- table(resultat$Frequency..Rock.)
-frequency_rock_counts_df <- as.data.frame(frequency_rock_counts)
-# Renommer les colonnes du data frame
-colnames(frequency_rock_counts_df) <- c("Fréquence", "Nombre de personnes")
+frequency_rock_counts_df<-as.data.frame(frequency_rock_counts)
+barplot(frequency_rock_counts, col=c("#AEC6CF", "#B2D8B2", "#FFD1AA", "#FFC1C1"),
+        xlab="La fréquence à laquelle la personne écoute de la musique Rock",
+        ylab="Nombre de réponses")
+title("Graphe représantant la variance de la fréquence 
+      à laquelle les participants écoutent de la musique Rock")
 
-# Créer le graphique à barres
-couleurs <- c("#AEC6CF", "#B2D8B2", "#FFD1AA", "#FFC1C1")
-bar_plot_frequency <- ggplot(data.frame(Exploratory = names(frequency_rock_counts_df), Count = frequency_rock_counts_df),
-                   aes(x = frequency_rock_counts_df$Fréquence, y = frequency_rock_counts_df$`Nombre de personnes`)) +
-  geom_bar(stat = "identity") +
-  labs(x = "La fréquence à laquelle la personne écoute de la musique Rock", y = "Nombre de réponses", title = "Graphe représantant la variance de la fréquence à laquelle les participants écoutent de la musique Rock") 
-# Définir les couleurs des barres
-
-# Afficher le graphique
-print(bar_plot_frequency)
 ```
-
-
-**variables quantitative**    
-
+La majorité des personnes qui ont répondu à ce sondage écoutent fréquemment du rock.
+```{r}
+summary(frequency_rock_counts_df)
+```
+## *2- Variables quantitatives*
+**1- Graphique répresentatif et résumés numériques    **    
 - *Age* : continue
-Regrouppement je dois argumenter (effectif + voir cahier)
+
 ```{r}
 min(resultat$Age)
 max(resultat$Age)
-nombre_personnes_plus_60 <- sum(resultat$Age > 60)
-print(nombre_personnes_plus_60)
-max(resultat$Age)
-nombre_personnes_plus_21 <- sum(resultat$Age > 0 & resultat$Age <21)
-print(nombre_personnes_plus_21)
-nombre_personnes_plus_50 <- sum(resultat$Age > 50)
-print(nombre_personnes_plus_50)
-nombre_personnes_plus_40 <- sum(resultat$Age > 40)
-print(nombre_personnes_plus_40)
-nombre_personnes_entre18et30 <- sum(resultat$Age > 17 & resultat$Age <31)
-print(nombre_personnes_entre18et30)
-nombre_personnes_entre10et18 <- sum(resultat$Age > 9 & resultat$Age <19)
-print(nombre_personnes_entre10et18)
+nombre_personnes_entre18et22 <- sum(resultat$Age >= 18 & resultat$Age <22)
+print(nombre_personnes_entre18et22)
 ```
-Age minimale 10 et max 89 
-16 personne a plus de 60 ans 
-regroupement [10;18[ -> enfant
-[18;25[ -> Jeune
+Au départ, nous avons choisi de regrouper les âges par intervalles de 4 ans, mais nous avons constaté que nous avions une population de 209 personnes âgées entre 18 et 22 ans, ce qui représente un tiers de notre population. Par conséquent, nous avons décidé de rediviser ces intervalles en deux, de 18 à 20 ans et de 20 à 22 ans.
+
 ```{r}
 par(mfrow=c(1,2))
 # Créer des intervalles d'âges personnalisés
-intervalles <- cut(resultat$Age, breaks = c(10, 14, 18,20, 22, 26, 30, 34, 38, 42, 46, 50, Inf), right = FALSE, include.lowest = TRUE)
+intervalles <- cut(resultat$Age,
+              breaks = c(10, 14, 18,20, 22, 26, 30, 34, 38, 42, 46, 50, 70, 80, 90),
+              right = FALSE, include.lowest = TRUE)
 
 tableau_intervalles <- table(intervalles)
-age_df<- data.frame(tableau_intervalles)
-print(age_df)
-colnames(age_df) <- c("Ages", "Nombre de personnes")
-age_df$Ages <- factor(age_df$Ages, levels = unique(age_df$Ages))
-print(age_df$Ages)
-
-
-```
-```{r}
-#tableau_intervall
-# Données d'exemplees <- c(10, 20, 15, 25, 30)
-par(mfrow=c(1,2))
-# Créer l'histogramme
-intervalles <- cut(resultat$Age, breaks = c(10, 14, 18,20, 22, 26, 30, 34, 38, 42, 46, 50, 70, 80, 90), right = FALSE, include.lowest = TRUE)
-
-tableau_intervalles <- table(intervalles)
-age_df<- data.frame(tableau_intervalles)
-
 
 h <- hist(resultat$Age, breaks = c(10, 14, 18,20, 22, 26, 30, 34, 38, 42, 46, 50, 70, 80, 90),
      main = "Histogramme des intervalles d'âges",
+     prob=TRUE,
      xlab = "Intervalle d'âge", ylab = "Nombre de personnes",xaxt="n")
 axis(side=1, at=seq(10,90,4),labels = seq(10,90,4))
-
-#text(h$mids,h$counts,labels=h$counts, adj=c(0.5, -0.5))
 points(seq(0,90,0.5),dnorm(seq(0,90,0.5),mean(resultat$Age),sd(resultat$Age)),col=2,type="l")
 print(resultat$Age)
 qqnorm(resultat$Age)
 abline(mean(resultat$Age),sd(resultat$Age),col=2)
 ```
+```{r}
+summary(resultat$Age)
+```
+
+**2- Etude du caractère gaussien    **    
+
 ça suit la loi normale .
+**3- Les estimateurs de moyenne et variance    **    
+Moyenne d'âges:   
+```{r}
+mean(resultat$Age)
+```
+Variance :    
+```{r}
+var(resultat$Age)
+```
+
+**4- Intervalles de confiance de la moyenne    **      
 Intervalles de confiance de la moyenne: 
 ```{r}
 interval=t.test(resultat$Age, conf.level = 0.5)
 interval$conf.int
 
 ```
-
-Dans ce cas, les intervalles de confiance sont [24.4463, 25.0760]. Cela signifie qu'avec un niveau de confiance de 0.5, nous sommes assez confiants que la vraie valeur de la moyenne de l'âge se situe entre 24.4463 et 25.0760.
-
-
+Le résultat obtenu [24.4463 25.0760] correspond à l'intervalle de confiance à 50% pour la moyenne de la variable d'âge. Cela signifie que l'on estime avec 50% de confiance que la vraie moyenne de l'âge de la population se situe entre 24.4463 et 25.0760.   
+```{r}
+interval=t.test(resultat$Age, conf.level = 0.95)
+interval$conf.int
+```
+Les valeurs [23.84500, 25.67729] correspondent à l'intervalle de confiance à 95% pour la moyenne de la variable analysée. Cela signifie qu'avec un niveau de confiance de 95%, nous estimons que la vraie moyenne de la population se situe entre 23.84500 et 25.67729.   
 - *Depression* : discrete
+**1- Graphique répresentatif et résumés numériques    ** 
 ```{r}
 
 depression_counts<- table(round(resultat$Depression))
-#J'ai fait un round car y a deux personnes qui ont mis 3.5 et je l'ai ai compté avec 4 
 depression_counts_df <- as.data.frame(depression_counts)
-print(depression_counts_df)
 # Renommer les colonnes du data frame
 colnames(depression_counts_df) <- c("Niveau de dépression", "Nombre de personnes")
 
-barplot(depression_counts_df$`Nombre de personnes`, names.arg = depression_counts_df$`Niveau de dépression`,
-        xlab = "Niveau de dépression", ylab = "Nombre de personnes", main = "Barplot de la dépression")
+barplot(depression_counts_df$`Nombre de personnes`,
+        col=c("#FFD1AA", "#FFC1C1", "#E0BBE4", "#FAB4D6", "#B2D8B2", "#D4EEFF",
+              "#FFCCE5", "#C9E7D9", "#FFD7C0", "#C5E3F6"),
+        names.arg = depression_counts_df$`Niveau de dépression`,
+        xlab = "Niveau de dépression", ylab = "Nombre de réponses",
+        
+        main = "Barplot de la dépression")
 
-#points(seq(0,10,1.5),dnorm(seq(0,10,1.5),mean(depression_counts_df$`Nombre de #personnes`),sd(depression_counts_df$`Nombre de personnes`)),col=2,type="l")
-curve(dnorm(depression_counts_df$`Nombre de personnes`, mean(depression_counts_df$`Nombre de personnes`), sd(depression_counts_df$`Nombre de personnes`), col=2, add=TRUE, lty=2))
-#print(resultat$Depression)
+points(seq(0,10,.5),dnorm(seq(0,10,0.5),
+mean(depression_counts_df$`Nombre de personnes`),sd(depression_counts_df$`Nombre de personnes`)),col=2,type="l")
+
 qqnorm(resultat$Depression)
 abline(mean(resultat$Depression),sd(resultat$Depression),col=2)
 
 ```
+```{r}
+summary(resultat$Depression)
+```
+**2- Etude du caractère gaussien    **   
+**3- Les estimateurs de moyenne et variance    ** 
+**4- Intervalles de confiance de la moyenne    **  
 
 ```{r}
-# Créer le diagramme en bâtons
-barplot(table(round(resultat$Depression)), 
-        names.arg = rownames(depression_counts_df),
-        xlab = "Catégories de dépression",
-        ylab = "Nombre de cas",
-        main = "Diagramme en bâtons des comptages de dépression")
+
 ```
 
 - *BPM* : discrète
+**1- Graphique répresentatif et résumés numériques    **  
 ```{r}
 bpm_counts<-table(resultat$BPM)
 bpm_counts_df<- as.data.frame(bpm_counts)
@@ -299,39 +287,40 @@ std <- sd(resultat$BPM) # écart-type de la population
 plot(function(x) dnorm(x,moy,std),main = "",lwd=3,xlab="Taille des pièces (en mm)",ylab="Fréquence")
 plot(bpm_counts_df$`Nombre de beats`, bpm_counts_df$`Nombres de réponses`, type)
 ```
+**2- Etude du caractère gaussien    **   
+**3- Les estimateurs de moyenne et variance    ** 
+**4- Intervalles de confiance de la moyenne    **  
 
-quanti * quali : 
-Pour cette analyse nous avons besoin d'avoir deux sous population, la première sous population c'est : ecoute trés fréquent et la deuxième c'est : rarement. 
-
+# *3 - Analyse multivariée* 
+## *1 - Analyse quanti x quali
+**1- Box plot    ** 
+Pour cette partie, nous allons répondre à cette question : Est-ce que le niveau de dépression des auditeurs dépend de l’écoute fréquente du genre musical Rock ?
+Pour cette analyse nous avons besoin d'avoir 4 sous population/groupe de la variable *Fréquence Rock*:
+- Premier groupe : 'Never'
+- Deuxième groupe : 'Rarely'
+- Troisième groupe :'Sometimes'
+- Quatrième groupe : 'Very frequently'
 ```{r}
 ggplot(resultat, aes(x = resultat$Frequency..Rock., y = resultat$Depression)) +
   geom_boxplot() +
-  labs(x = "Type de fréquence", y = "Niveau de dépression", title = "Boxplot de la dépression par type de fréquence")
-
+  labs(x = "Type de fréquence", y = "Niveau de dépression",
+       title = "Boxplot du niveau de dépression par type de fréquence")
 ```
-
-Dans l’exemple du tableau si nous supposons que la premi`ere modalit´e est ”H”
-et la deuxi`eme ”F”(donc a1 = H et a2 = F), nous avons n1 = 8 et n2 = 9.
-Nous pouvons maintenant calculer les statistiques associ´ees `a chaque groupe
-
-
-Rapport de corrélation : 
+Commentaires : pas de valeur extreme,...
+**2- Rapport de corrélation    ** 
 ```{r}
-
-
-#Moyenne au sein du groupe 1 : Never
+#Moyenne de niveau de dépression par groupe/sous population
 moyenne1<- mean(resultat$Depression[resultat$Frequency..Rock.=='Never'])
 moyenne2<- mean(resultat$Depression[resultat$Frequency..Rock.=='Very frequently'])
 moyenne3<- mean(resultat$Depression[resultat$Frequency..Rock.=='Sometimes'])
 moyenne4<- mean(resultat$Depression[resultat$Frequency..Rock.=='Rarely'])
-####Variance de y dans chaque sous groupe 
+
+#Variance de niveau de dépression par groupe/sous population
 var1<- var(resultat$Depression[resultat$Frequency..Rock.=='Never'])
 var2<- var(resultat$Depression[resultat$Frequency..Rock.=='Very frequently'])
 var3<- var(resultat$Depression[resultat$Frequency..Rock.=='Sometimes'])
 var4<- var(resultat$Depression[resultat$Frequency..Rock.=='Rarely'])
 
-
-####
 frequency_rock_counts<- table(resultat$Frequency..Rock.)
 frequency_rock_counts_df <- as.data.frame(frequency_rock_counts)
 
@@ -339,33 +328,115 @@ moyennes<-c(moyenne1,moyenne4,moyenne3,moyenne2)
 variances<-c(var1,var4,var3,var2)
 frequency_rock_counts_df$Moyennes <- moyennes
 frequency_rock_counts_df$`Variance dans chaque groupe` <- variances
-colnames(frequency_rock_counts_df)<-c("Frequency","Nombre de reponses","Moyennes","Variance dans chaque groupe")
+colnames(frequency_rock_counts_df)<-c("Frequency","Nombre de reponses",
+                                      "Moyennes","Variance dans chaque groupe")
 print(frequency_rock_counts_df) #pour avoir le nombre de réponses
-#La moyenne globale c'est la moyenne pondérée des moyennes des groupes
+```
+
+
+```{r}
 # Calculer la moyenne pondérée
 moyenne_ponderee <- sum(frequency_rock_counts_df$`Nombre de reponses` * frequency_rock_counts_df$Moyennes) /
                     sum(frequency_rock_counts_df$`Nombre de reponses`)
 # Moyenne pondérée
-print(sum(frequency_rock_counts_df$`Nombre de reponses` * frequency_rock_counts_df$Moyennes))
 print(moyenne_ponderee)
-#Var(Y) : Variance totale
+```
+
+
+```{r}
+#Var(Y) : Variance totale sans utiliser le théorème de décomposition de la variance
 variance<-var(resultat$Depression)
 print(variance)
+```
+
+
+```{r}
 #Variance interclasse (B)
 B<- sum(frequency_rock_counts_df$`Nombre de reponses` *
           (frequency_rock_counts_df$Moyennes - moyenne_ponderee )^ 2)/sum(frequency_rock_counts_df$`Nombre de reponses`)
 print(B)
+```
+
+
+```{r}
 #Variance intraclasse (W)
 W<- sum(frequency_rock_counts_df$`Nombre de reponses` *
           (frequency_rock_counts_df $`Variance dans chaque groupe` ))/sum(frequency_rock_counts_df$`Nombre de reponses`)
 print(W)
 #
 ```
+Après avoir calculé les variances intraclasses (W) et et les variances interclasses(B) nous pouvons appliquer le théorème de décomposition de la variance trouver la variance totale (V) de la variable `Depression` qui est égale à W + B: 
 
-quanti* quanti :
+```{r}
+V<- B +W 
+print(V)
+```
+Commentaires : Nous remarquons que V est égale à la variance calculée précédemment, ce qui prouve la justesse de nos calculs.
+Nous pouvons, maintenant, calculer le rapport de corrélation. Cet indicateur mesure la part de variabilité globale imputable aux différences de groupe.
+```{r}
+rapport_correlation<- B/V
+print(rapport_correlation)
+```
+Le rapport de corrélation est proche de 0 alors il semble ne pas avoir de lien entre les deux variables ; autrement dit, la fréquence de l'écoute de musique rock ne donne pas d’information sur le niveau de dépression des personnes. 
+**3- Test d'égalité des moyennes    ** 
+```{r}
+shapiro.test(resultat$Depression)
+```
+##############dire que la population est grande au lieu de normale
+Pour faire le test des moyennes, il faut d'abord calculer la variance pour savoir si on la prend en compte dans le test des moyennes. Nous avons décidé de comparer les moyennes de 'Very frequently' et 'Never'. 
+Les hypothèses sont : 
+  - H0 les variances sont égales.
+  - H1 les variances sont différentes.
+```{r}
+var.test(resultat$Depression[resultat$Frequency..Rock.=='Never'], resultat$Depression[resultat$Frequency..Rock.=='Very frequently'])
+```
+Les résultats du test de variance indiquent qu'il n'y a pas de différence significative entre les variances des groupes 'Never' et 'Very frequently'et p-valeur élevée. Cela signifie que, pour effectuer un test de comparaison des moyennes entre ces deux groupes, nous pouvez considérer que les variances sont égales et nous rejetons H1.
+
+On va faire le test des moyennes en prennant en compte la variance.
+Les hypothèses sont :
+  - H0 les moyennes sont égales.
+  - H1 les moyennes sont différentes.
+  
+```{r}
+t.test(resultat$Depression[resultat$Frequency..Rock.=='Never'], resultat$Depression[resultat$Frequency..Rock.=='Very frequently'],
+       var.equal = TRUE)
+```
+La p-value est de 1.517e-05, ce qui est extrêmement faible. Cela indique qu'il y a suffisamment de preuves pour rejeter l'hypothèse nulle selon laquelle les moyennes des deux groupes sont égales. Autrement dit, il y a une différence significative entre les moyennes des groupes 'Never' et 'Very frequently'.
+Sur la base des analyses effectuées et des résultats significatifs obtenus, il semble y avoir une association entre l'écoute intensive de rock et la santé mentale.
+## *2 - Analyse quali x quali*
+**1- le tableau de contingence et une représentation graphique**
+```{r}
+exploratory_plateform<- data.frame(resultat$Primary.streaming.service,resultat$Exploratory)
+tableau_contingence<- table(exploratory_plateform$resultat.Primary.streaming.service,
+                            exploratory_plateform$resultat.Exploratory)
+print(tableau_contingence)
+```
+```{r}
+#Représentation graphique
+colnames(df)<- c("Plateform", "Response", "Effectif")
+ggplot(df, aes(x =Plateform, y=Effectif, fill=Response))+
+ geom_bar(stat = "identity", position = "stack")+
+  labs(c="Plateforme de streaming de musique", y="Nombre de réponses",
+       fill="Réponse")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+Selon le graphique les utilisateurs de Spotify ont tendance à découvire des nouveaux genres/artistes.
+Sachant que Spotify offre un accès à une vaste bibliothèque de musique comprenant des millions de chansons provenant d'artistes du monde entier. Cette diversité musicale attire de nombreux utilisateurs qui peuvent trouver facilement leur musique préférée ainsi que de nouvelles découvertes.
+**2- Test d’indépendance**
+Nous devons faire le test du Chi-deux  avec les hypothèses : 
+- H0 : les variables sont indépendantes. 
+- H1 : les variables sont dépendantes.
+```{r}
+chisq.test(tableau_contingence)
+```
+Commentaires : La p-value est de 3.327e-09, ce qui est extrêmement faible. Cela indique qu'il y a des preuves très solides pour rejeter l'hypothèse nulle d'indépendance entre les variables. Autrement dit, il y a une relation significative entre les variables étudiées.L'avis mentionne que l'approximation du Chi-2 peut être incorrecte. Cela peut se produire lorsque les effectifs dans les cellules sont faibles ou lorsque les conditions d'application du test ne sont pas satisfaites.
+
+## *3- Analyse quanti* quanti :*
 ```{r}
 # Créer des intervalles d'âges personnalisés
-intervalles <- cut(resultat$Age, breaks = c(10, 14, 18,20, 22, 26, 30, 34, 38, 42, 46, 50, Inf), right = FALSE, include.lowest = TRUE)
+intervalles <- cut(resultat$Age,
+                   breaks = c(10, 14, 18,20, 22, 26, 30, 34, 38, 42, 46, 50, Inf), right = FALSE, include.lowest = TRUE)
 
 tableau_intervalles <- table(intervalles)
 age_df<- data.frame(tableau_intervalles)
@@ -378,6 +449,11 @@ print(age_df$Ages)
 moyenne_bpm <- aggregate(resultat$BPM ~ intervalles, data = resultat, FUN = mean)
 colnames(moyenne_bpm) <- c("Intervalles", "Moyenne BPM")
 print(moyenne_bpm)
+```
+
+Calculons la corrélation de Pearson sur ces deux variables et determinons s'il existe une corrélation entre les deux.
+
+```{r}
 cor(intervalles,moyenne_bpm$`Moyenne BPM`)
 ```
 
@@ -393,18 +469,3 @@ ggplot(data = table, aes(x = Age, y = BPM)) +
   geom_smooth(method = "lm", color = "orange")
 ```
 
-quali*quali: 
-```{r}
-exploratory_plateform<- data.frame(resultat$Primary.streaming.service,resultat$Exploratory)
-tableau_contingence<- table(exploratory_plateform$resultat.Primary.streaming.service,exploratory_plateform$resultat.Exploratory)
-#Tableau de contingence 
-print(tableau_contingence)
-#Représentation graphique
-colnames(df)<- c("Plateform", "Response", "Effectif")
-ggplot(df, aes(x =Plateform, y=Effectif, fill=Response))+
-  geom_bar(stat = "identity", position = "stack")+
-  labs(c="Plateforme de streaming de musique", y="Nombre de réponses", fill="Réponse")+
-  theme_minimal()
-
-#Il faut commenter ça
-````
