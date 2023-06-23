@@ -51,7 +51,6 @@ Nos données proviennent d'un sondage réalisé via un formulaire Google. Notre 
 ## *2 - Description des modifications de la base  *  
 
 Nous avons choisi de supprimer la colonne contenant l'heure de soumission du formulaire ainsi que la colonne des permissions, car ces informations ne fournissent pas de données pertinentes pour notre étude.  
-  
 
 ```{r }
 resultat <- resultat[, -which(names(resultat) == "Timestamp")]
@@ -63,11 +62,20 @@ resultat <- subset(resultat, !is.na(Age) & Age != "")
 ```
 Nous avons supprimé les indidus qui qui n'ont pas renseigné le BPM.
 ```{r }
-resultat <- subset(resultat, !is.na(BPM) & BPM != "")
+resultat <- subset(resultat, !is.na(BPM) & BPM != "" & BPM == 999999999 & BPM == 0)
 ```
 ```{r}
 resultat <- subset(resultat, !is.na(Primary.streaming.service) & Primary.streaming.service != "")
 ```
+```{r}
+
+```
+
+```{r}
+#Ici on supprime la dernière ligne car elle contient 999999 beats / minute ce qui est une valeur impossible
+resultat<-
+```
+
 ## *3 - Description de la population étudiée    *
 
 ```{r}
@@ -133,7 +141,6 @@ streaming_counts_df <- as.data.frame(streaming_counts)
 # Calculer les pourcentages
 streaming_counts_df$Percentage <- paste0(round(streaming_counts_df$Freq /
                                                  sum(streaming_counts_df$Freq) * 100, 2), "%")
-
 # Créer le graphique en camembert
 pie_chart <- pie(streaming_counts, labels = streaming_counts_df$Percentage,
         col=c( "#FFD1AA", "#FFC1C1", "#E0BBE4", "#FAB4D6","#B2D8B2", "#D4EEFF"),
@@ -249,13 +256,26 @@ abline(mean(resultat$Depression),sd(resultat$Depression),col=2)
 summary(resultat$Depression)
 ```
 **2- Etude du caractère gaussien    **   
-**3- Les estimateurs de moyenne et variance    ** 
+
+**3- Les estimateurs de moyenne et variance    **    
+Moyenne:
+```{r}
+mean(resultat$Depression)
+```
+Variance:
+```{r}
+var(resultat$Depression)
+```
+Les valeurs [23.84500, 25.67729] correspondent à l'intervalle de confiance à 95% pour la moyenne de la variable analysée. Cela signifie qu'avec un niveau de confiance de 95%, nous estimons que la vraie moyenne de la population se situe entre 23.84500 et 25.67729.   
+
 **4- Intervalles de confiance de la moyenne    **  
 
 ```{r}
-
+interval=t.test(resultat$Depression, conf.level = 0.5)
+interval$conf.int
 ```
-
+Les valeurs [4.801246 4.963085] correspondent à l'intervalle de confiance à 50% pour la moyenne de la variable depression. Cela signifie qu'avec un niveau de confiance de 50%, nous estimons que la vraie moyenne de la population se situe entre 4.801246 et 4.963085.  
+La moyenne caculée précédemment se situe bien dans cet intervalle.
 - *BPM* : discrète
 **1- Graphique répresentatif et résumés numériques    **  
 ```{r}
@@ -288,7 +308,12 @@ plot(function(x) dnorm(x,moy,std),main = "",lwd=3,xlab="Taille des pièces (en m
 plot(bpm_counts_df$`Nombre de beats`, bpm_counts_df$`Nombres de réponses`, type)
 ```
 **2- Etude du caractère gaussien    **   
-**3- Les estimateurs de moyenne et variance    ** 
+**3- Les estimateurs de moyenne et variance    **    
+Moyenne : 
+```{r}
+mean(resultat$BPM)
+```
+
 **4- Intervalles de confiance de la moyenne    **  
 
 # *3 - Analyse multivariée* 
